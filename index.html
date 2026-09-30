@@ -3,144 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chroma Creative Studio | Web Canvas Editor</title>
+  <title>Adobe: Creative, marketing and document management solutions</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- jsPDF for real client-side PDF conversions -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body class="dark-theme">
-  <!-- Top App Navigation Bar -->
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-icon">🎨</span>
-      <span class="brand-title">Chroma Studio</span>
-      <span class="badge">v1.0</span>
-    </div>
+<body>
 
-    <div class="topbar-actions">
-      <button id="btn-undo" class="btn btn-secondary" title="Undo (Ctrl+Z)">↩ Undo</button>
-      <button id="btn-redo" class="btn btn-secondary" title="Redo (Ctrl+Y)">↪ Redo</button>
-      <label class="btn btn-secondary file-upload-label">
-        📂 Open Image
-        <input type="file" id="file-input" accept="image/*" style="display: none;">
-      </label>
-      <button id="btn-clear" class="btn btn-danger" title="Clear Canvas">🗑 Clear</button>
-      <button id="btn-export" class="btn btn-primary" title="Export Artwork">💾 Export PNG</button>
+  <!-- Global Header Navigation -->
+  <header class="adobe-nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <!-- Adobe Iconic Red Logo -->
+        <a href="#" class="adobe-logo" title="Adobe Home">
+          <svg viewBox="0 0 30 26" width="28" height="24" fill="#eb1000" aria-label="Adobe">
+            <polygon points="19,0 30,0 30,26"/>
+            <polygon points="11.1,0 0,0 0,26"/>
+            <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 11.3,20.8"/>
+          </svg>
+          <span class="logo-text">Adobe</span>
+        </a>
+
+        <nav class="main-menu">
+          <div class="menu-item has-dropdown">
+            <button class="menu-btn">Creativity & Design <span class="arrow">▾</span></button>
+            <div class="dropdown-panel">
+              <div class="dropdown-col">
+                <h4>Featured Products</h4>
+                <a href="#apps" class="drop-link"><span class="app-badge ps">Ps</span> Photoshop</a>
+                <a href="#apps" class="drop-link"><span class="app-badge ai">Ai</span> Illustrator</a>
+                <a href="#apps" class="drop-link"><span class="app-badge pr">Pr</span> Premiere Pro</a>
+                <a href="#apps" class="drop-link"><span class="app-badge ex">Ex</span> Adobe Express</a>
+                <a href="#apps" class="drop-link"><span class="app-badge ff">Ff</span> Adobe Firefly (AI)</a>
+              </div>
+              <div class="dropdown-col">
+                <h4>Creative Plans</h4>
+                <a href="#apps" class="drop-link">Creative Cloud All Apps</a>
+                <a href="#apps" class="drop-link">Students and Teachers</a>
+                <a href="#apps" class="drop-link">Individuals & Freelancers</a>
+                <a href="#apps" class="drop-link">Business & Enterprise</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item has-dropdown">
+            <button class="menu-btn">PDF & E-signatures <span class="arrow">▾</span></button>
+            <div class="dropdown-panel">
+              <div class="dropdown-col">
+                <h4>Online Acrobat Tools</h4>
+                <a href="#tools" class="drop-link" onclick="openTool('jpg-to-pdf')">JPG to PDF</a>
+                <a href="#tools" class="drop-link" onclick="openTool('pdf-to-word')">PDF to Word</a>
+                <a href="#tools" class="drop-link" onclick="openTool('merge-pdf')">Merge PDF</a>
+                <a href="#tools" class="drop-link" onclick="openTool('compress-pdf')">Compress PDF</a>
+                <a href="#tools" class="drop-link" onclick="openTool('sign-pdf')">Sign PDF</a>
+              </div>
+              <div class="dropdown-col">
+                <h4>Acrobat Products</h4>
+                <a href="#tools" class="drop-link">Acrobat Pro</a>
+                <a href="#tools" class="drop-link">Acrobat Standard</a>
+                <a href="#tools" class="drop-link">Adobe Acrobat Reader</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item">
+            <a href="#studio" class="menu-btn text-link">Web Studio (Editor)</a>
+          </div>
+
+          <div class="menu-item">
+            <a href="#firefly" class="menu-btn text-link">Firefly AI</a>
+          </div>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <button class="nav-search-btn" title="Search Adobe" id="search-toggle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+        <button class="btn-text" id="btn-signin">Sign In</button>
+        <a href="#tools" class="btn-adobe-primary">Free Trial</a>
+      </div>
     </div>
   </header>
 
-  <!-- Main Workspace -->
-  <main class="workspace">
-    <!-- Left Toolbar (Tools) -->
-    <aside class="sidebar-left">
-      <div class="tool-group">
-        <span class="section-label">Tools</span>
-        <button class="tool-btn active" data-tool="brush" title="Brush (B)">🖌️ Brush</button>
-        <button class="tool-btn" data-tool="line" title="Line (L)">📏 Line</button>
-        <button class="tool-btn" data-tool="rect" title="Rectangle (R)">⬜ Rectangle</button>
-        <button class="tool-btn" data-tool="circle" title="Circle (C)">⭕ Circle</button>
-        <button class="tool-btn" data-tool="eraser" title="Eraser (E)">🧹 Eraser</button>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">ADOBE CREATIVE CLOUD + FIREFLY</div>
+      <h1 class="hero-title">Do it all with Adobe.</h1>
+      <p class="hero-subtitle">Make anything you can imagine with 20+ apps, built-in generative AI, and professional PDF productivity tools.</p>
+      
+      <div class="hero-cta-group">
+        <a href="#tools" class="btn-hero-primary">Try Online PDF Tools</a>
+        <a href="#studio" class="btn-hero-secondary">Launch Web Canvas Studio</a>
+        <a href="#apps" class="btn-hero-link">Explore all apps →</a>
       </div>
+    </div>
 
-      <div class="tool-group">
-        <span class="section-label">Stroke</span>
-        <div class="slider-control">
-          <label for="brush-size">Size: <span id="size-val">5</span>px</label>
-          <input type="range" id="brush-size" min="1" max="100" value="5">
-        </div>
-        <div class="slider-control">
-          <label for="brush-opacity">Opacity: <span id="opacity-val">100</span>%</label>
-          <input type="range" id="brush-opacity" min="5" max="100" value="100">
-        </div>
-      </div>
-
-      <div class="tool-group">
-        <span class="section-label">Color</span>
-        <div class="color-picker-wrapper">
-          <input type="color" id="primary-color" value="#6366f1">
-          <span id="color-hex">#6366f1</span>
-        </div>
-        <div class="palette-swatches">
-          <div class="swatch" style="background:#000000;" data-color="#000000"></div>
-          <div class="swatch" style="background:#ffffff;" data-color="#ffffff"></div>
-          <div class="swatch" style="background:#ef4444;" data-color="#ef4444"></div>
-          <div class="swatch" style="background:#f59e0b;" data-color="#f59e0b"></div>
-          <div class="swatch" style="background:#10b981;" data-color="#10b981"></div>
-          <div class="swatch" style="background:#06b6d4;" data-color="#06b6d4"></div>
-          <div class="swatch" style="background:#6366f1;" data-color="#6366f1"></div>
-          <div class="swatch" style="background:#ec4899;" data-color="#ec4899"></div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Canvas Stage -->
-    <section class="canvas-container">
-      <div class="canvas-viewport" id="viewport">
-        <canvas id="main-canvas" width="900" height="600"></canvas>
-      </div>
-    </section>
-
-    <!-- Right Sidebar (Adjustments & Filters) -->
-    <aside class="sidebar-right">
-      <div class="panel-section">
-        <h3>Adjustments & Filters</h3>
-        <p class="subtitle">Live non-destructive post-processing</p>
-        
-        <div class="filter-slider">
-          <label for="filter-brightness">Brightness: <span id="val-brightness">100</span>%</label>
-          <input type="range" id="filter-brightness" min="0" max="200" value="100">
-        </div>
-
-        <div class="filter-slider">
-          <label for="filter-contrast">Contrast: <span id="val-contrast">100</span>%</label>
-          <input type="range" id="filter-contrast" min="0" max="200" value="100">
-        </div>
-
-        <div class="filter-slider">
-          <label for="filter-saturation">Saturation: <span id="val-saturation">100</span>%</label>
-          <input type="range" id="filter-saturation" min="0" max="200" value="100">
-        </div>
-
-        <div class="filter-slider">
-          <label for="filter-blur">Blur: <span id="val-blur">0</span>px</label>
-          <input type="range" id="filter-blur" min="0" max="20" value="0">
-        </div>
-
-        <div class="filter-toggles">
-          <label class="toggle-control">
-            <input type="checkbox" id="filter-grayscale">
-            <span>Grayscale</span>
-          </label>
-          <label class="toggle-control">
-            <input type="checkbox" id="filter-invert">
-            <span>Invert</span>
-          </label>
-          <label class="toggle-control">
-            <input type="checkbox" id="filter-sepia">
-            <span>Sepia</span>
-          </label>
-        </div>
-
-        <button id="btn-reset-filters" class="btn btn-secondary full-width">Reset Filters</button>
-      </div>
-
-      <div class="panel-section">
-        <h3>Canvas Dimensions</h3>
-        <div class="dim-inputs">
+    <!-- Interactive Firefly AI Generator Banner -->
+    <div class="firefly-preview-card" id="firefly">
+      <div class="firefly-header">
+        <div class="ff-brand">
+          <span class="app-badge ff">Ff</span>
           <div>
-            <label>Width</label>
-            <input type="number" id="canvas-w" value="900" min="200" max="3840">
-          </div>
-          <div>
-            <label>Height</label>
-            <input type="number" id="canvas-h" value="600" min="200" max="2160">
+            <strong>Adobe Firefly</strong>
+            <span class="ff-sub">Generative AI Playground</span>
           </div>
         </div>
-        <button id="btn-resize-canvas" class="btn btn-secondary full-width" style="margin-top: 8px;">Apply Size</button>
+        <span class="ai-pill">✨ Powered by AI</span>
       </div>
-    </aside>
-  </main>
+
+      <div class="prompt-box">
+        <input type="text" id="ai-prompt-input" placeholder="Describe what you want to see (e.g. Cyberpunk city floating in pastel clouds)..." value="Futuristic neon holographic camera in deep space, hyper-detailed 8k">
+        <button id="btn-generate-ai" class="btn-ai-generate">Generate</button>
+      </div>
+
+      <div class="prompt-suggestions">
+        <span class="sugg-tag" data-prompt="Vibrant surrealist watercolor portrait of an astronaut with flowers">🌸 Watercolor Astronaut</span>
+        <span class="sugg-tag" data-prompt="Cyberpunk Tokyo street at night with glowing neon reflections in rain">🌧️ Neon Cyberpunk</span>
+        <span class="sugg-tag" data-prompt="3D isometric digital workspace with miniature laptops and plants">💻 3D Isometric Desk</span>
+      </div>
+
+      <div class="ai-output-viewport" id="ai-viewport">
+        <div class="ai-generated-image" id="ai-img-preview">
+          <div class="image-overlay-info">
+            <span id="prompt-display">Futuristic neon holographic camera in deep space, hyper-detailed 8k</span>
+            <button class="btn-mini" onclick="downloadAIArt()">Download Asset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Adobe Acrobat Online Quick Tools Section -->
+  <section class="tools-section" id="tools">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-pill">ONLINE ACROBAT SUITE</span>
+        <h2>Work with PDFs online. Anywhere.</h2>
+        <p>Convert, compress, merge, and sign documents with genuine in-browser processing.</p>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="tool-tabs">
+        <button class="tool-tab active" data-category="convert">Convert & Export</button>
+        <button class="tool-tab" data-category="edit">Edit & Organize</button>
+        <button class="tool-tab" data-category="sign">Sign & Protect</button>
+      </div>
+
+      <!-- Quick Tools Grid -->
+      <div class="tools-grid">
+        <!-- Tool 1: JPG / PNG to PDF (Real working tool) -->
+        <div class="tool-card" onclick="openTool('jpg-to-pdf')">
+          <div class="tool-icon icon-jpg-pdf">🖼️ ➔ 📄</div>
+          <h3>Convert JPG to PDF</h3>
+          <p>Turn images into high-quality PDF files instantly right in your browser.</p>
+          <span class="tool-action-btn">Convert Now →</span>
+        </div>
+
+        <!-- Tool 2: PDF to Word -->
+        <div class="tool-card" onclick="openTool('pdf-to-word')">
+          <div class="tool-icon icon-pdf-word">📄 ➔ 📝</div>
+          <h3>PDF to Word (DOCX)</h3>
+          <p>Extract and convert PDF tables and texts into editable Microsoft Word documents.</p>
+          <span class="tool-action-btn">Convert Now →</span>
+        </div>
+
+        <!-- Tool 3: Merge PDFs -->
+        <div class="tool-card" onclick="openTool('merge-pdf')">
+          <div class="tool-icon icon-merge">📑 ➕ 📑</div>
+          <h3>Merge PDFs</h3>
+          <p>Combine multiple PDF documents or images into a single cohesive document.</p>
+          <span class="tool-action-btn">Combine Files →</span>
+        </div>
+
+        <!-- Tool 4: Compress PDF -->
+        <div class="tool-card" onclick="openTool('compress-pdf')">
+          <div class="tool-icon icon-compress">🗜️ 📉</div>
+          <h3>Compress PDF Size</h3>
+          <p>Reduce large PDF file sizes while maintaining sharp document and image clarity.</p>
+          <span class="tool-action-btn">Compress File →</span>
+        </div>
+
+        <!-- Tool 5: Sign PDF -->
+        <div class="tool-card" onclick="openTool('sign-pdf')">
+          <div class="tool-icon icon-sign">✍️ 🖋️</div>
+          <h3>Fill & Sign PDF</h3>
+          <p>Create digital signatures, sign agreements, and export signed documents.</p>
+          <span class="tool-action-btn">Sign Document →</span>
+        </div>
+
+        <!-- Tool 6: Word to PDF -->
+        <div class="tool-card" onclick="openTool('word-to-pdf')">
+          <div class="tool-icon icon-word-pdf">📝 ➔ 📄</div>
+          <h3>Word to PDF</h3>
+          <p>Convert DOCX and Word documents into universally readable PDF records.</p>
+          <span class="tool-action-btn">Convert to PDF →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Adobe Quick Tool Modal Engine -->
+  <div class="modal-overlay" id="tool-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Convert JPG to PDF</h3>
+        <button class="modal-close" onclick="closeTool()">✕</button>
+      </div>
+
+      <div class="modal-body" id="modal-content">
+        <!-- Dynamic content injected by app.js depending on selected tool -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Integrated Web Canvas Studio (Photoshop Web Simulator) -->
+  <section class="studio-section" id="studio">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-pill">CREATIVE CLOUD ON THE WEB</span>
+        <h2>Chroma Creative Studio: Photoshop Web</h2>
+        <p>A browser-based creative graphics workspace for drawing, filtering, and asset generation.</p>
+      </div>
+
+      <div class="studio-workspace-card">
+        <!-- Studio Toolbar -->
+        <div class="studio-bar">
+          <div class="tool-buttons">
+            <button class="s-btn active" data-studio-tool="brush" id="s-brush">🖌️ Brush</button>
+            <button class="s-btn" data-studio-tool="line" id="s-line">📏 Line</button>
+            <button class="s-btn" data-studio-tool="rect" id="s-rect">⬜ Rect</button>
+            <button class="s-btn" data-studio-tool="circle" id="s-circle">⭕ Circle</button>
+            <button class="s-btn" data-studio-tool="eraser" id="s-eraser">🧹 Eraser</button>
+          </div>
+
+          <div class="studio-controls">
+            <label>Size: <input type="range" id="s-size" min="1" max="60" value="6"></label>
+            <label>Color: <input type="color" id="s-color" value="#eb1000"></label>
+            <button class="s-btn-action" id="s-undo" title="Undo">↩</button>
+            <button class="s-btn-action" id="s-clear">🗑 Clear</button>
+            <button class="s-btn-primary" id="s-export">💾 Save PNG</button>
+          </div>
+        </div>
+
+        <!-- Studio Canvas Area -->
+        <div class="canvas-viewport-wrapper">
+          <canvas id="studio-canvas" width="960" height="520"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Creative Cloud Apps Showcase -->
+  <section class="apps-section" id="apps">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-pill">CREATIVE APPS</span>
+        <h2>Explore Industry-Standard Creative Apps</h2>
+        <p>Every tool you need to transform imagination into reality.</p>
+      </div>
+
+      <div class="apps-grid">
+        <div class="app-card">
+          <div class="app-card-top">
+            <span class="app-badge ps large">Ps</span>
+            <div class="app-meta">
+              <h3>Photoshop</h3>
+              <span class="app-category">Photo editing & compositing</span>
+            </div>
+          </div>
+          <p>Create beautiful images, graphics, and art with generative AI powered by Adobe Firefly.</p>
+          <div class="app-card-footer">
+            <a href="#studio" class="btn-app-link">Launch Web Editor</a>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-top">
+            <span class="app-badge ai large">Ai</span>
+            <div class="app-meta">
+              <h3>Illustrator</h3>
+              <span class="app-category">Vector graphics & illustration</span>
+            </div>
+          </div>
+          <p>Design logos, icons, and illustrations with vector precision that scales to any screen.</p>
+          <div class="app-card-footer">
+            <a href="#studio" class="btn-app-link">Free Trial</a>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-top">
+            <span class="app-badge pr large">Pr</span>
+            <div class="app-meta">
+              <h3>Premiere Pro</h3>
+              <span class="app-category">Professional video editing</span>
+            </div>
+          </div>
+          <p>Cut, color, and finish video productions for social, cinema, and television.</p>
+          <div class="app-card-footer">
+            <a href="#studio" class="btn-app-link">Free Trial</a>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-top">
+            <span class="app-badge ac large">Ac</span>
+            <div class="app-meta">
+              <h3>Acrobat Pro</h3>
+              <span class="app-category">PDF & electronic signatures</span>
+            </div>
+          </div>
+          <p>The complete all-in-one PDF solution to create, edit, convert, and sign documents securely.</p>
+          <div class="app-card-footer">
+            <a href="#tools" class="btn-app-link">Use Online Tools</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Footer -->
+  <footer class="adobe-footer">
+    <div class="footer-container">
+      <div class="footer-columns">
+        <div class="f-col">
+          <h4>Shop For</h4>
+          <a href="#">Creative Cloud All Apps</a>
+          <a href="#">Photoshop</a>
+          <a href="#">Illustrator</a>
+          <a href="#">Premiere Pro</a>
+          <a href="#">Acrobat Pro</a>
+          <a href="#">Special Offers</a>
+        </div>
+        <div class="f-col">
+          <h4>Acrobat Online Tools</h4>
+          <a href="#tools" onclick="openTool('jpg-to-pdf')">JPG to PDF</a>
+          <a href="#tools" onclick="openTool('pdf-to-word')">PDF to Word</a>
+          <a href="#tools" onclick="openTool('merge-pdf')">Merge PDF</a>
+          <a href="#tools" onclick="openTool('compress-pdf')">Compress PDF</a>
+          <a href="#tools" onclick="openTool('sign-pdf')">Sign PDF</a>
+        </div>
+        <div class="f-col">
+          <h4>Education & Business</h4>
+          <a href="#">Students & Teachers</a>
+          <a href="#">Schools & Universities</a>
+          <a href="#">Small & Midsize Business</a>
+          <a href="#">Enterprise Solutions</a>
+        </div>
+        <div class="f-col">
+          <h4>Support & Community</h4>
+          <a href="#">Help Center & Tutorials</a>
+          <a href="#">Community Forums</a>
+          <a href="#">Genuine Software</a>
+          <a href="#">Developers & APIs</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="f-bottom-left">
+          <span>🌐 Change region / United States (English)</span>
+        </div>
+        <div class="f-bottom-right">
+          <p>© 2026 Adobe Systems Clone. Built for portfolio & demonstration purposes.</p>
+          <div class="f-legal">
+            <a href="#">Privacy</a> • <a href="#">Terms of Use</a> • <a href="#">Cookie Preferences</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>
