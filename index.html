@@ -8,8 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- jsPDF for real client-side PDF conversions -->
+  <!-- jsPDF for client-side PDF document generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- PDF.js for in-browser PDF Reader / Viewer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
@@ -32,45 +34,47 @@
             <button class="menu-btn">Creativity & Design <span class="arrow">▾</span></button>
             <div class="dropdown-panel">
               <div class="dropdown-col">
-                <h4>Featured Products</h4>
-                <a href="#apps" class="drop-link"><span class="app-badge ps">Ps</span> Photoshop</a>
+                <h4>Creative Tools</h4>
+                <a href="#tools" class="drop-link" onclick="openTool('watermark-remover')">🧽 Watermark Remover</a>
+                <a href="#tools" class="drop-link" onclick="openTool('bg-remover')">🎭 Background Remover</a>
+                <a href="#tools" class="drop-link" onclick="openTool('humanizer')">🤖 AI Text Humanizer</a>
+                <a href="#studio" class="drop-link"><span class="app-badge ps">Ps</span> Photoshop Web</a>
+                <a href="#firefly" class="drop-link"><span class="app-badge ff">Ff</span> Firefly AI Generator</a>
+              </div>
+              <div class="dropdown-col">
+                <h4>Creative Cloud Apps</h4>
                 <a href="#apps" class="drop-link"><span class="app-badge ai">Ai</span> Illustrator</a>
                 <a href="#apps" class="drop-link"><span class="app-badge pr">Pr</span> Premiere Pro</a>
                 <a href="#apps" class="drop-link"><span class="app-badge ex">Ex</span> Adobe Express</a>
-                <a href="#apps" class="drop-link"><span class="app-badge ff">Ff</span> Adobe Firefly (AI)</a>
-              </div>
-              <div class="dropdown-col">
-                <h4>Creative Plans</h4>
-                <a href="#apps" class="drop-link">Creative Cloud All Apps</a>
-                <a href="#apps" class="drop-link">Students and Teachers</a>
-                <a href="#apps" class="drop-link">Individuals & Freelancers</a>
-                <a href="#apps" class="drop-link">Business & Enterprise</a>
+                <a href="#apps" class="drop-link">All Creative Cloud Apps</a>
               </div>
             </div>
           </div>
 
           <div class="menu-item has-dropdown">
-            <button class="menu-btn">PDF & E-signatures <span class="arrow">▾</span></button>
+            <button class="menu-btn">PDF & Acrobat Tools <span class="arrow">▾</span></button>
             <div class="dropdown-panel">
               <div class="dropdown-col">
-                <h4>Online Acrobat Tools</h4>
-                <a href="#tools" class="drop-link" onclick="openTool('jpg-to-pdf')">JPG to PDF</a>
-                <a href="#tools" class="drop-link" onclick="openTool('pdf-to-word')">PDF to Word</a>
-                <a href="#tools" class="drop-link" onclick="openTool('merge-pdf')">Merge PDF</a>
-                <a href="#tools" class="drop-link" onclick="openTool('compress-pdf')">Compress PDF</a>
-                <a href="#tools" class="drop-link" onclick="openTool('sign-pdf')">Sign PDF</a>
+                <h4>Acrobat Online Suite</h4>
+                <a href="#tools" class="drop-link" onclick="openTool('multi-photo-to-pdf')">🖼️ Multi-Photo to PDF</a>
+                <a href="#tools" class="drop-link" onclick="openTool('pdf-reader')">📖 In-Browser PDF Reader</a>
+                <a href="#tools" class="drop-link" onclick="openTool('pdf-to-word')">📄 PDF to Word (DOCX)</a>
+                <a href="#tools" class="drop-link" onclick="openTool('merge-pdf')">📑 Merge PDFs</a>
+                <a href="#tools" class="drop-link" onclick="openTool('compress-pdf')">🗜️ Compress PDF</a>
+                <a href="#tools" class="drop-link" onclick="openTool('sign-pdf')">✍️ Fill & Sign PDF</a>
               </div>
               <div class="dropdown-col">
-                <h4>Acrobat Products</h4>
-                <a href="#tools" class="drop-link">Acrobat Pro</a>
-                <a href="#tools" class="drop-link">Acrobat Standard</a>
-                <a href="#tools" class="drop-link">Adobe Acrobat Reader</a>
+                <h4>Edit & Secure</h4>
+                <a href="#tools" class="drop-link" onclick="openTool('split-pdf')">✂️ Split PDF Pages</a>
+                <a href="#tools" class="drop-link" onclick="openTool('rotate-pdf')">🔄 Rotate PDF Pages</a>
+                <a href="#tools" class="drop-link" onclick="openTool('watermark-add')">🏷️ Add Watermark</a>
+                <a href="#tools" class="drop-link" onclick="openTool('protect-pdf')">🔒 Password Protect PDF</a>
               </div>
             </div>
           </div>
 
           <div class="menu-item">
-            <a href="#studio" class="menu-btn text-link">Web Studio (Editor)</a>
+            <a href="#studio" class="menu-btn text-link">Photoshop Studio</a>
           </div>
 
           <div class="menu-item">
@@ -95,14 +99,14 @@
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
-      <div class="hero-badge">ADOBE CREATIVE CLOUD + FIREFLY</div>
+      <div class="hero-badge">ADOBE ACROBAT & CREATIVE SUITE 2026</div>
       <h1 class="hero-title">Do it all with Adobe.</h1>
-      <p class="hero-subtitle">Make anything you can imagine with 20+ apps, built-in generative AI, and professional PDF productivity tools.</p>
+      <p class="hero-subtitle">Every tool you need: Multi-photo PDF converter, full in-browser PDF reader, AI watermark remover, text humanizer, and creative canvas.</p>
       
       <div class="hero-cta-group">
-        <a href="#tools" class="btn-hero-primary">Try Online PDF Tools</a>
-        <a href="#studio" class="btn-hero-secondary">Launch Web Canvas Studio</a>
-        <a href="#apps" class="btn-hero-link">Explore all apps →</a>
+        <a href="#tools" class="btn-hero-primary" onclick="openTool('multi-photo-to-pdf')">Multi-Photo to PDF</a>
+        <a href="#tools" class="btn-hero-secondary" onclick="openTool('pdf-reader')">Open PDF Reader</a>
+        <a href="#tools" class="btn-hero-link" onclick="openTool('humanizer')">AI Text Humanizer →</a>
       </div>
     </div>
 
@@ -141,71 +145,126 @@
     </div>
   </section>
 
-  <!-- Adobe Acrobat Online Quick Tools Section -->
+  <!-- Complete Adobe Acrobat & Smart Tools Suite -->
   <section class="tools-section" id="tools">
     <div class="section-container">
       <div class="section-header">
-        <span class="section-pill">ONLINE ACROBAT SUITE</span>
-        <h2>Work with PDFs online. Anywhere.</h2>
-        <p>Convert, compress, merge, and sign documents with genuine in-browser processing.</p>
+        <span class="section-pill">ONLINE ACROBAT & CREATIVE UTILITIES</span>
+        <h2>Work with Documents & Creative Media Anywhere</h2>
+        <p>Convert multiple photos, read PDFs online, remove watermarks, humanize AI writing, and sign documents.</p>
       </div>
 
       <!-- Category Filter Tabs -->
       <div class="tool-tabs">
-        <button class="tool-tab active" data-category="convert">Convert & Export</button>
-        <button class="tool-tab" data-category="edit">Edit & Organize</button>
-        <button class="tool-tab" data-category="sign">Sign & Protect</button>
+        <button class="tool-tab active" data-filter="all">All Tools (12)</button>
+        <button class="tool-tab" data-filter="pdf">PDF & Documents</button>
+        <button class="tool-tab" data-filter="ai">AI & Creative (Humanizer, Watermark)</button>
+        <button class="tool-tab" data-filter="security">Sign & Protect</button>
       </div>
 
       <!-- Quick Tools Grid -->
       <div class="tools-grid">
-        <!-- Tool 1: JPG / PNG to PDF (Real working tool) -->
-        <div class="tool-card" onclick="openTool('jpg-to-pdf')">
-          <div class="tool-icon icon-jpg-pdf">🖼️ ➔ 📄</div>
-          <h3>Convert JPG to PDF</h3>
-          <p>Turn images into high-quality PDF files instantly right in your browser.</p>
-          <span class="tool-action-btn">Convert Now →</span>
+
+        <!-- Tool 1: Multi-Select Photo to PDF -->
+        <div class="tool-card highlighted" data-category="pdf" onclick="openTool('multi-photo-to-pdf')">
+          <div class="tool-icon">🖼️ ➔ 📑</div>
+          <span class="card-badge">Multi-Select Enabled</span>
+          <h3>Multi-Photo to PDF</h3>
+          <p>Select multiple images (JPG, PNG, WebP) at once, reorder pages, and export a multi-page PDF.</p>
+          <span class="tool-action-btn">Convert Multiple Photos →</span>
         </div>
 
-        <!-- Tool 2: PDF to Word -->
-        <div class="tool-card" onclick="openTool('pdf-to-word')">
-          <div class="tool-icon icon-pdf-word">📄 ➔ 📝</div>
+        <!-- Tool 2: Full In-Browser PDF Reader -->
+        <div class="tool-card highlighted" data-category="pdf" onclick="openTool('pdf-reader')">
+          <div class="tool-icon">📖 🔍</div>
+          <span class="card-badge">Interactive Viewer</span>
+          <h3>Acrobat PDF Reader</h3>
+          <p>View, zoom, navigate pages, and read PDF files directly in your browser with high-fidelity rendering.</p>
+          <span class="tool-action-btn">Open PDF Reader →</span>
+        </div>
+
+        <!-- Tool 3: AI Watermark Remover -->
+        <div class="tool-card highlighted" data-category="ai" onclick="openTool('watermark-remover')">
+          <div class="tool-icon">🧽 🪄</div>
+          <span class="card-badge new-pill">Smart AI Tool</span>
+          <h3>Watermark Remover</h3>
+          <p>Erase watermarks, logos, stamps, and date stamps from images and documents using content-aware inpainting.</p>
+          <span class="tool-action-btn">Remove Watermark →</span>
+        </div>
+
+        <!-- Tool 4: AI Text Humanizer -->
+        <div class="tool-card highlighted" data-category="ai" onclick="openTool('humanizer')">
+          <div class="tool-icon">🤖 ➔ 🧑</div>
+          <span class="card-badge new-pill">AI Detection Bypass</span>
+          <h3>AI Text Humanizer</h3>
+          <p>Transform robotic AI text into natural, nuanced human writing with zero AI detector flags.</p>
+          <span class="tool-action-btn">Humanize AI Text →</span>
+        </div>
+
+        <!-- Tool 5: Background Remover -->
+        <div class="tool-card" data-category="ai" onclick="openTool('bg-remover')">
+          <div class="tool-icon">🎭 ✂️</div>
+          <h3>Background Remover</h3>
+          <p>Remove backgrounds from portraits, product shots, and graphics to produce transparent PNGs.</p>
+          <span class="tool-action-btn">Remove Background →</span>
+        </div>
+
+        <!-- Tool 6: PDF to Word -->
+        <div class="tool-card" data-category="pdf" onclick="openTool('pdf-to-word')">
+          <div class="tool-icon">📄 ➔ 📝</div>
           <h3>PDF to Word (DOCX)</h3>
-          <p>Extract and convert PDF tables and texts into editable Microsoft Word documents.</p>
-          <span class="tool-action-btn">Convert Now →</span>
+          <p>Extract and convert PDF tables, paragraphs, and formatted layout into editable Microsoft Word files.</p>
+          <span class="tool-action-btn">Convert to Word →</span>
         </div>
 
-        <!-- Tool 3: Merge PDFs -->
-        <div class="tool-card" onclick="openTool('merge-pdf')">
-          <div class="tool-icon icon-merge">📑 ➕ 📑</div>
+        <!-- Tool 7: Merge PDFs -->
+        <div class="tool-card" data-category="pdf" onclick="openTool('merge-pdf')">
+          <div class="tool-icon">📑 ➕ 📑</div>
           <h3>Merge PDFs</h3>
-          <p>Combine multiple PDF documents or images into a single cohesive document.</p>
+          <p>Combine multiple PDF documents, reports, and spreadsheets into a single unified binder.</p>
           <span class="tool-action-btn">Combine Files →</span>
         </div>
 
-        <!-- Tool 4: Compress PDF -->
-        <div class="tool-card" onclick="openTool('compress-pdf')">
-          <div class="tool-icon icon-compress">🗜️ 📉</div>
+        <!-- Tool 8: Compress PDF -->
+        <div class="tool-card" data-category="pdf" onclick="openTool('compress-pdf')">
+          <div class="tool-icon">🗜️ 📉</div>
           <h3>Compress PDF Size</h3>
-          <p>Reduce large PDF file sizes while maintaining sharp document and image clarity.</p>
+          <p>Reduce large file sizes by up to 80% while preserving crystal-clear text and image resolution.</p>
           <span class="tool-action-btn">Compress File →</span>
         </div>
 
-        <!-- Tool 5: Sign PDF -->
-        <div class="tool-card" onclick="openTool('sign-pdf')">
-          <div class="tool-icon icon-sign">✍️ 🖋️</div>
+        <!-- Tool 9: Fill & Sign PDF -->
+        <div class="tool-card" data-category="security" onclick="openTool('sign-pdf')">
+          <div class="tool-icon">✍️ 🖋️</div>
           <h3>Fill & Sign PDF</h3>
-          <p>Create digital signatures, sign agreements, and export signed documents.</p>
+          <p>Draw legal digital signatures, sign paperwork, and export signed agreements instantly.</p>
           <span class="tool-action-btn">Sign Document →</span>
         </div>
 
-        <!-- Tool 6: Word to PDF -->
-        <div class="tool-card" onclick="openTool('word-to-pdf')">
-          <div class="tool-icon icon-word-pdf">📝 ➔ 📄</div>
-          <h3>Word to PDF</h3>
-          <p>Convert DOCX and Word documents into universally readable PDF records.</p>
-          <span class="tool-action-btn">Convert to PDF →</span>
+        <!-- Tool 10: Split PDF -->
+        <div class="tool-card" data-category="pdf" onclick="openTool('split-pdf')">
+          <div class="tool-icon">✂️ 📑</div>
+          <h3>Split PDF Pages</h3>
+          <p>Extract specific individual pages or page ranges from a large PDF document.</p>
+          <span class="tool-action-btn">Split Document →</span>
         </div>
+
+        <!-- Tool 11: Rotate PDF -->
+        <div class="tool-card" data-category="pdf" onclick="openTool('rotate-pdf')">
+          <div class="tool-icon">🔄 📐</div>
+          <h3>Rotate PDF</h3>
+          <p>Fix upside-down or sideways pages by rotating clockwise or counter-clockwise 90° / 180°.</p>
+          <span class="tool-action-btn">Rotate Pages →</span>
+        </div>
+
+        <!-- Tool 12: Password Protect PDF -->
+        <div class="tool-card" data-category="security" onclick="openTool('protect-pdf')">
+          <div class="tool-icon">🔒 🛡️</div>
+          <h3>Protect PDF</h3>
+          <p>Secure confidential PDF documents with 128-bit/256-bit password protection and permissions.</p>
+          <span class="tool-action-btn">Protect File →</span>
+        </div>
+
       </div>
     </div>
   </section>
@@ -214,12 +273,12 @@
   <div class="modal-overlay" id="tool-modal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="modal-title">Convert JPG to PDF</h3>
+        <h3 id="modal-title">Acrobat Tool</h3>
         <button class="modal-close" onclick="closeTool()">✕</button>
       </div>
 
       <div class="modal-body" id="modal-content">
-        <!-- Dynamic content injected by app.js depending on selected tool -->
+        <!-- Dynamic tool content injected by app.js -->
       </div>
     </div>
   </div>
@@ -345,10 +404,10 @@
         </div>
         <div class="f-col">
           <h4>Acrobat Online Tools</h4>
-          <a href="#tools" onclick="openTool('jpg-to-pdf')">JPG to PDF</a>
-          <a href="#tools" onclick="openTool('pdf-to-word')">PDF to Word</a>
-          <a href="#tools" onclick="openTool('merge-pdf')">Merge PDF</a>
-          <a href="#tools" onclick="openTool('compress-pdf')">Compress PDF</a>
+          <a href="#tools" onclick="openTool('multi-photo-to-pdf')">Multi-Photo to PDF</a>
+          <a href="#tools" onclick="openTool('pdf-reader')">In-Browser PDF Reader</a>
+          <a href="#tools" onclick="openTool('watermark-remover')">Watermark Remover</a>
+          <a href="#tools" onclick="openTool('humanizer')">AI Text Humanizer</a>
           <a href="#tools" onclick="openTool('sign-pdf')">Sign PDF</a>
         </div>
         <div class="f-col">
