@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chroma Creative Studio | Web Canvas Editor</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <!-- Top App Navigation Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">🎨</span>
+      <span class="brand-title">Chroma Studio</span>
+      <span class="badge">v1.0</span>
+    </div>
+
+    <div class="topbar-actions">
+      <button id="btn-undo" class="btn btn-secondary" title="Undo (Ctrl+Z)">↩ Undo</button>
+      <button id="btn-redo" class="btn btn-secondary" title="Redo (Ctrl+Y)">↪ Redo</button>
+      <label class="btn btn-secondary file-upload-label">
+        📂 Open Image
+        <input type="file" id="file-input" accept="image/*" style="display: none;">
+      </label>
+      <button id="btn-clear" class="btn btn-danger" title="Clear Canvas">🗑 Clear</button>
+      <button id="btn-export" class="btn btn-primary" title="Export Artwork">💾 Export PNG</button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="workspace">
+    <!-- Left Toolbar (Tools) -->
+    <aside class="sidebar-left">
+      <div class="tool-group">
+        <span class="section-label">Tools</span>
+        <button class="tool-btn active" data-tool="brush" title="Brush (B)">🖌️ Brush</button>
+        <button class="tool-btn" data-tool="line" title="Line (L)">📏 Line</button>
+        <button class="tool-btn" data-tool="rect" title="Rectangle (R)">⬜ Rectangle</button>
+        <button class="tool-btn" data-tool="circle" title="Circle (C)">⭕ Circle</button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser (E)">🧹 Eraser</button>
+      </div>
+
+      <div class="tool-group">
+        <span class="section-label">Stroke</span>
+        <div class="slider-control">
+          <label for="brush-size">Size: <span id="size-val">5</span>px</label>
+          <input type="range" id="brush-size" min="1" max="100" value="5">
+        </div>
+        <div class="slider-control">
+          <label for="brush-opacity">Opacity: <span id="opacity-val">100</span>%</label>
+          <input type="range" id="brush-opacity" min="5" max="100" value="100">
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <span class="section-label">Color</span>
+        <div class="color-picker-wrapper">
+          <input type="color" id="primary-color" value="#6366f1">
+          <span id="color-hex">#6366f1</span>
+        </div>
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#000000;" data-color="#000000"></div>
+          <div class="swatch" style="background:#ffffff;" data-color="#ffffff"></div>
+          <div class="swatch" style="background:#ef4444;" data-color="#ef4444"></div>
+          <div class="swatch" style="background:#f59e0b;" data-color="#f59e0b"></div>
+          <div class="swatch" style="background:#10b981;" data-color="#10b981"></div>
+          <div class="swatch" style="background:#06b6d4;" data-color="#06b6d4"></div>
+          <div class="swatch" style="background:#6366f1;" data-color="#6366f1"></div>
+          <div class="swatch" style="background:#ec4899;" data-color="#ec4899"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Canvas Stage -->
+    <section class="canvas-container">
+      <div class="canvas-viewport" id="viewport">
+        <canvas id="main-canvas" width="900" height="600"></canvas>
+      </div>
+    </section>
+
+    <!-- Right Sidebar (Adjustments & Filters) -->
+    <aside class="sidebar-right">
+      <div class="panel-section">
+        <h3>Adjustments & Filters</h3>
+        <p class="subtitle">Live non-destructive post-processing</p>
+        
+        <div class="filter-slider">
+          <label for="filter-brightness">Brightness: <span id="val-brightness">100</span>%</label>
+          <input type="range" id="filter-brightness" min="0" max="200" value="100">
+        </div>
+
+        <div class="filter-slider">
+          <label for="filter-contrast">Contrast: <span id="val-contrast">100</span>%</label>
+          <input type="range" id="filter-contrast" min="0" max="200" value="100">
+        </div>
+
+        <div class="filter-slider">
+          <label for="filter-saturation">Saturation: <span id="val-saturation">100</span>%</label>
+          <input type="range" id="filter-saturation" min="0" max="200" value="100">
+        </div>
+
+        <div class="filter-slider">
+          <label for="filter-blur">Blur: <span id="val-blur">0</span>px</label>
+          <input type="range" id="filter-blur" min="0" max="20" value="0">
+        </div>
+
+        <div class="filter-toggles">
+          <label class="toggle-control">
+            <input type="checkbox" id="filter-grayscale">
+            <span>Grayscale</span>
+          </label>
+          <label class="toggle-control">
+            <input type="checkbox" id="filter-invert">
+            <span>Invert</span>
+          </label>
+          <label class="toggle-control">
+            <input type="checkbox" id="filter-sepia">
+            <span>Sepia</span>
+          </label>
+        </div>
+
+        <button id="btn-reset-filters" class="btn btn-secondary full-width">Reset Filters</button>
+      </div>
+
+      <div class="panel-section">
+        <h3>Canvas Dimensions</h3>
+        <div class="dim-inputs">
+          <div>
+            <label>Width</label>
+            <input type="number" id="canvas-w" value="900" min="200" max="3840">
+          </div>
+          <div>
+            <label>Height</label>
+            <input type="number" id="canvas-h" value="600" min="200" max="2160">
+          </div>
+        </div>
+        <button id="btn-resize-canvas" class="btn btn-secondary full-width" style="margin-top: 8px;">Apply Size</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
