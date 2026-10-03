@@ -34,6 +34,7 @@ A full-featured, responsive **Adobe official website clone** ([adobe.com](https:
 - Real-time AI detection probability meter dropping from 98% down to 3%.
 
 ### 5. 🎭 Creative Cloud Utilities & Document Security
+- **Word to PDF (DOCX to PDF)**: In-browser conversion of Microsoft Word (`.docx`) files into high-quality PDFs with live document sheet preview powered by `Mammoth.js` and `html2pdf.js`.
 - **Background Remover**: One-click subject cutout to export transparent PNGs.
 - **Fill & Sign PDF**: Digital ink signature canvas pad with PNG/PDF download.
 - **PDF to Word (DOCX)**: In-browser conversion of documents into editable formats.
@@ -58,6 +59,8 @@ A full-featured, responsive **Adobe official website clone** ([adobe.com](https:
 - **Styling**: Vanilla CSS3 (Custom design tokens, Flexbox, CSS Grid, Glassmorphic cards, responsive breakpoints)
 - **Logic**: Vanilla JavaScript (ES6+, DOM events, HTML5 Canvas API)
 - **Libraries**:
+  - [Mammoth.js](https://github.com/mwilliamson/mammoth.js) for client-side Word (`.docx`) document parsing.
+  - [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) for high-fidelity client-side HTML to PDF generation.
   - [jsPDF](https://github.com/parallax/jsPDF) for client-side PDF document compilation.
   - [PDF.js](https://mozilla.github.io/pdf.js/) for high-fidelity in-browser PDF rendering.
 

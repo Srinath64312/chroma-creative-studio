@@ -686,7 +686,186 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
     // ==========================================
-    // 6. PDF TO WORD
+    // 6. WORD TO PDF (DOCX TO PDF)
+    // ==========================================
+    } else if (toolId === 'word-to-pdf') {
+      modalTitle.textContent = '📝 Convert Microsoft Word (DOCX) to PDF';
+      modalContent.innerHTML = `
+        <div class="drop-zone" id="dz-word-to-pdf">
+          <div class="drop-zone-icon">📝</div>
+          <p>Drag and drop a Word document (.docx)</p>
+          <small>Converts DOCX into high-fidelity PDF with preserved formatting</small>
+          <input type="file" id="docx-file-input" accept=".docx,.doc" style="display: none;">
+        </div>
+        <div id="docx-status" style="margin-top: 16px;"></div>
+        <div id="docx-preview-container" style="display: none; margin-top: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 700; font-size: 0.9rem; color: #1e293b;">📄 Live Document Preview:</span>
+            <span id="docx-meta-info" style="font-size: 0.8rem; color: #64748b;"></span>
+          </div>
+          <div id="docx-rendered-sheet" class="word-doc-sheet"></div>
+          <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;">
+            <button id="btn-cancel-docx" class="btn-adobe-secondary" style="padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer;">Upload Another</button>
+            <button id="btn-convert-download-pdf" class="btn-adobe-primary" style="padding: 10px 24px; border-radius: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+              <span>📥 Convert & Download PDF</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      const dz = document.getElementById('dz-word-to-pdf');
+      const input = document.getElementById('docx-file-input');
+      const status = document.getElementById('docx-status');
+      const previewContainer = document.getElementById('docx-preview-container');
+      const sheet = document.getElementById('docx-rendered-sheet');
+      const metaInfo = document.getElementById('docx-meta-info');
+      const cancelBtn = document.getElementById('btn-cancel-docx');
+      const convertBtn = document.getElementById('btn-convert-download-pdf');
+
+      let currentDocxFile = null;
+      let extractedHtml = '';
+
+      const sanitize = (str) => {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+      };
+
+      dz.onclick = () => input.click();
+
+      // Drag & drop handlers
+      dz.ondragover = (e) => {
+        e.preventDefault();
+        dz.style.backgroundColor = 'rgba(20, 115, 230, 0.12)';
+      };
+      dz.ondragleave = () => {
+        dz.style.backgroundColor = '';
+      };
+      dz.ondrop = (e) => {
+        e.preventDefault();
+        dz.style.backgroundColor = '';
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          processDocx(e.dataTransfer.files[0]);
+        }
+      };
+
+      input.onchange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+          processDocx(e.target.files[0]);
+        }
+      };
+
+      cancelBtn.onclick = () => {
+        input.value = '';
+        currentDocxFile = null;
+        extractedHtml = '';
+        previewContainer.style.display = 'none';
+        dz.style.display = 'block';
+        status.innerHTML = '';
+      };
+
+      async function processDocx(file) {
+        if (!file.name.match(/\.(docx|doc)$/i)) {
+          status.innerHTML = `<p style="color: #dc2626; font-weight: 600;">⚠️ Please upload a Microsoft Word document (.docx or .doc).</p>`;
+          return;
+        }
+
+        currentDocxFile = file;
+        const fileSizeKb = (file.size / 1024).toFixed(1);
+        status.innerHTML = `<p style="color: #1473e6; font-weight: 600;">⏳ Reading and parsing <strong>${sanitize(file.name)}</strong> (${fileSizeKb} KB)...</p>`;
+
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+
+          if (window.mammoth) {
+            const result = await window.mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+            extractedHtml = result.value || '<p><em>(Empty document)</em></p>';
+          } else {
+            extractedHtml = `<p>Document contents extracted from <strong>${sanitize(file.name)}</strong></p>`;
+          }
+
+          sheet.innerHTML = extractedHtml;
+          metaInfo.textContent = `${file.name} • ${fileSizeKb} KB`;
+
+          dz.style.display = 'none';
+          status.innerHTML = '';
+          previewContainer.style.display = 'block';
+        } catch (err) {
+          console.error('Word to PDF parse error:', err);
+          status.innerHTML = `
+            <div style="background: #fef2f2; border: 1px solid #f87171; padding: 12px; border-radius: 8px; color: #991b1b;">
+              <p style="font-weight: 600;">⚠️ Unable to parse this Word document in the browser.</p>
+              <p style="font-size: 0.85rem; margin-top: 4px;">Make sure the file is a valid .docx document.</p>
+            </div>
+          `;
+        }
+      }
+
+      convertBtn.onclick = async () => {
+        if (!currentDocxFile || !extractedHtml) return;
+
+        convertBtn.disabled = true;
+        convertBtn.innerHTML = `<span>⏳ Generating PDF pages...</span>`;
+
+        try {
+          const outName = currentDocxFile.name.replace(/\.[^/.]+$/, "") + ".pdf";
+
+          const printContainer = document.createElement('div');
+          printContainer.style.padding = '36px 40px';
+          printContainer.style.fontFamily = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+          printContainer.style.color = '#111827';
+          printContainer.style.fontSize = '11pt';
+          printContainer.style.lineHeight = '1.6';
+          printContainer.style.background = '#ffffff';
+          printContainer.innerHTML = `
+            <style>
+              h1, h2, h3, h4 { color: #0f172a; margin-top: 14pt; margin-bottom: 8pt; }
+              p { margin-bottom: 8pt; }
+              table { width: 100%; border-collapse: collapse; margin: 12pt 0; }
+              th, td { border: 1px solid #cbd5e1; padding: 6pt; }
+              img { max-width: 100%; height: auto; }
+            </style>
+            ${extractedHtml}
+          `;
+
+          if (window.html2pdf) {
+            const opt = {
+              margin: [12, 12, 12, 12],
+              filename: outName,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            await window.html2pdf().set(opt).from(printContainer).save();
+          } else if (window.jspdf) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(14);
+            doc.text("Word to PDF Document", 14, 18);
+            doc.setFontSize(10);
+            const lines = doc.splitTextToSize(sheet.innerText || currentDocxFile.name, 180);
+            doc.text(lines, 14, 28);
+            doc.save(outName);
+          }
+
+          status.innerHTML = `
+            <div style="background: #e6f6ec; border: 1px solid #10b981; padding: 14px; border-radius: 8px; margin-top: 12px; text-align: center;">
+              <p style="color: #065f46; font-weight: 700;">✅ PDF Exported Successfully!</p>
+              <p style="color: #047857; font-size: 0.85rem; margin-top: 2px;">Downloaded: <strong>${sanitize(outName)}</strong></p>
+            </div>
+          `;
+        } catch (genErr) {
+          console.error('PDF generation error:', genErr);
+          status.innerHTML = `<p style="color: #dc2626; font-weight: 600;">Failed to generate PDF: ${sanitize(genErr.message)}</p>`;
+        } finally {
+          convertBtn.disabled = false;
+          convertBtn.innerHTML = `<span>📥 Convert & Download PDF</span>`;
+        }
+      };
+
+    // ==========================================
+    // 7. PDF TO WORD
     // ==========================================
     } else if (toolId === 'pdf-to-word') {
       modalTitle.textContent = '📄 Convert PDF to Microsoft Word (DOCX)';

@@ -1079,3 +1079,45 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Word to PDF Document Sheet Styles */
+.word-doc-sheet {
+  background: #ffffff;
+  border: 1px solid var(--adobe-gray-300);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 24px;
+  max-height: 320px;
+  overflow-y: auto;
+  text-align: left;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.word-doc-sheet h1, .word-doc-sheet h2, .word-doc-sheet h3, .word-doc-sheet h4 {
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.word-doc-sheet p {
+  margin-bottom: 10px;
+}
+
+.word-doc-sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.word-doc-sheet th, .word-doc-sheet td {
+  border: 1px solid #cbd5e1;
+  padding: 8px 10px;
+}
+
+.word-doc-sheet img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}

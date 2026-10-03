@@ -12,6 +12,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- PDF.js for in-browser PDF Reader / Viewer -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Mammoth.js for client-side Word (DOCX) document parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- html2pdf.js for client-side HTML to PDF document generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -58,6 +62,7 @@
                 <h4>Acrobat Online Suite</h4>
                 <a href="#tools" class="drop-link" onclick="openTool('multi-photo-to-pdf')">🖼️ Multi-Photo to PDF</a>
                 <a href="#tools" class="drop-link" onclick="openTool('pdf-reader')">📖 In-Browser PDF Reader</a>
+                <a href="#tools" class="drop-link" onclick="openTool('word-to-pdf')">📝 Word to PDF (DOCX)</a>
                 <a href="#tools" class="drop-link" onclick="openTool('pdf-to-word')">📄 PDF to Word (DOCX)</a>
                 <a href="#tools" class="drop-link" onclick="openTool('merge-pdf')">📑 Merge PDFs</a>
                 <a href="#tools" class="drop-link" onclick="openTool('compress-pdf')">🗜️ Compress PDF</a>
@@ -156,7 +161,7 @@
 
       <!-- Category Filter Tabs -->
       <div class="tool-tabs">
-        <button class="tool-tab active" data-filter="all">All Tools (12)</button>
+        <button class="tool-tab active" data-filter="all">All Tools (13)</button>
         <button class="tool-tab" data-filter="pdf">PDF & Documents</button>
         <button class="tool-tab" data-filter="ai">AI & Creative (Humanizer, Watermark)</button>
         <button class="tool-tab" data-filter="security">Sign & Protect</button>
@@ -209,7 +214,16 @@
           <span class="tool-action-btn">Remove Background →</span>
         </div>
 
-        <!-- Tool 6: PDF to Word -->
+        <!-- Tool 6: Word to PDF (DOCX to PDF) -->
+        <div class="tool-card highlighted" data-category="pdf" onclick="openTool('word-to-pdf')">
+          <div class="tool-icon">📝 ➔ 📄</div>
+          <span class="card-badge new-pill">Client-Side Engine</span>
+          <h3>Word to PDF (DOCX)</h3>
+          <p>Convert Microsoft Word (.docx) documents into professional PDFs with live in-browser preview.</p>
+          <span class="tool-action-btn">Convert Word to PDF →</span>
+        </div>
+
+        <!-- Tool 7: PDF to Word -->
         <div class="tool-card" data-category="pdf" onclick="openTool('pdf-to-word')">
           <div class="tool-icon">📄 ➔ 📝</div>
           <h3>PDF to Word (DOCX)</h3>
@@ -405,6 +419,7 @@
         <div class="f-col">
           <h4>Acrobat Online Tools</h4>
           <a href="#tools" onclick="openTool('multi-photo-to-pdf')">Multi-Photo to PDF</a>
+          <a href="#tools" onclick="openTool('word-to-pdf')">Word to PDF (DOCX)</a>
           <a href="#tools" onclick="openTool('pdf-reader')">In-Browser PDF Reader</a>
           <a href="#tools" onclick="openTool('watermark-remover')">Watermark Remover</a>
           <a href="#tools" onclick="openTool('humanizer')">AI Text Humanizer</a>
