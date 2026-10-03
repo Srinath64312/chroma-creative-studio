@@ -5,6 +5,14 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Universal safe resolver for jsPDF
+  function getJsPdfClass() {
+    if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+    if (typeof window.jsPDF === 'function') return window.jsPDF;
+    if (typeof jsPDF === 'function') return jsPDF;
+    throw new Error('PDF generation library (jsPDF) is not loaded.');
+  }
+
   // Setup PDF.js worker
   if (window.pdfjsLib) {
     window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -164,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
           try {
-            const { jsPDF } = window.jspdf;
+            const jsPDF = getJsPdfClass();
             const orientationSetting = document.getElementById('pdf-orientation').value;
             const margin = parseInt(document.getElementById('pdf-margin').value, 10);
 
@@ -304,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Default sample PDF generation
-      const { jsPDF } = window.jspdf;
+      const jsPDF = getJsPdfClass();
       const samplePdf = new jsPDF();
       samplePdf.setFontSize(22);
       samplePdf.setTextColor(235, 16, 0);
@@ -805,48 +813,138 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentDocxFile || !extractedHtml) return;
 
         convertBtn.disabled = true;
-        convertBtn.innerHTML = `<span>⏳ Generating PDF pages...</span>`;
+        convertBtn.innerHTML = `<span>⏳ Converting & Rendering PDF...</span>`;
+
+        const outName = currentDocxFile.name.replace(/\.[^/.]+$/, "") + ".pdf";
+        let exportWrapper = null;
 
         try {
-          const outName = currentDocxFile.name.replace(/\.[^/.]+$/, "") + ".pdf";
-
-          const printContainer = document.createElement('div');
-          printContainer.style.padding = '36px 40px';
-          printContainer.style.fontFamily = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-          printContainer.style.color = '#111827';
-          printContainer.style.fontSize = '11pt';
-          printContainer.style.lineHeight = '1.6';
-          printContainer.style.background = '#ffffff';
-          printContainer.innerHTML = `
+          // 1. Create a styled measuring container attached to DOM (required by html2canvas)
+          exportWrapper = document.createElement('div');
+          exportWrapper.style.position = 'fixed';
+          exportWrapper.style.left = '-9999px';
+          exportWrapper.style.top = '0';
+          exportWrapper.style.width = '794px'; // Standard A4 pixel width at 96 DPI
+          exportWrapper.style.minHeight = '1123px';
+          exportWrapper.style.padding = '48px 52px';
+          exportWrapper.style.background = '#ffffff';
+          exportWrapper.style.color = '#1e293b';
+          exportWrapper.style.fontFamily = "'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif";
+          exportWrapper.style.fontSize = '11.5pt';
+          exportWrapper.style.lineHeight = '1.65';
+          exportWrapper.style.boxSizing = 'border-box';
+          exportWrapper.style.overflow = 'visible';
+          exportWrapper.innerHTML = `
             <style>
-              h1, h2, h3, h4 { color: #0f172a; margin-top: 14pt; margin-bottom: 8pt; }
-              p { margin-bottom: 8pt; }
-              table { width: 100%; border-collapse: collapse; margin: 12pt 0; }
-              th, td { border: 1px solid #cbd5e1; padding: 6pt; }
-              img { max-width: 100%; height: auto; }
+              h1, h2, h3, h4, h5 { color: #0f172a; margin-top: 16pt; margin-bottom: 8pt; font-weight: 700; line-height: 1.25; }
+              h1 { font-size: 22pt; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 6pt; }
+              h2 { font-size: 17pt; }
+              h3 { font-size: 13pt; }
+              p { margin-bottom: 10pt; word-break: break-word; }
+              table { width: 100%; border-collapse: collapse; margin: 14pt 0; font-size: 10.5pt; }
+              th, td { border: 1px solid #cbd5e1; padding: 7pt 10pt; text-align: left; }
+              th { background: #f8fafc; font-weight: 600; color: #334155; }
+              img { max-width: 100%; height: auto; margin: 8pt 0; display: block; }
+              ul, ol { margin-left: 22pt; margin-bottom: 10pt; }
+              li { margin-bottom: 4pt; }
+              blockquote { border-left: 3px solid #1473e6; padding-left: 12pt; margin: 10pt 0; color: #475569; font-style: italic; }
             </style>
             ${extractedHtml}
           `;
 
-          if (window.html2pdf) {
-            const opt = {
-              margin: [12, 12, 12, 12],
-              filename: outName,
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+          document.body.appendChild(exportWrapper);
 
-            await window.html2pdf().set(opt).from(printContainer).save();
-          } else if (window.jspdf) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(14);
-            doc.text("Word to PDF Document", 14, 18);
-            doc.setFontSize(10);
-            const lines = doc.splitTextToSize(sheet.innerText || currentDocxFile.name, 180);
-            doc.text(lines, 14, 28);
-            doc.save(outName);
+          // Give layout engine a short tick to compute fonts and images
+          await new Promise(r => setTimeout(r, 120));
+
+          const jsPDF = getJsPdfClass();
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const a4Width = 210;
+          const a4Height = 297;
+          const margin = 10;
+          const printableWidth = a4Width - margin * 2; // 190 mm
+          const printableHeight = a4Height - margin * 2; // 277 mm
+
+          let generatedSuccessfully = false;
+
+          // Attempt high-res html2canvas rendering
+          if (typeof window.html2canvas === 'function') {
+            try {
+              const canvas = await window.html2canvas(exportWrapper, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 794,
+                logging: false
+              });
+
+              if (canvas && canvas.width > 0 && canvas.height > 0) {
+                const pxPerMm = canvas.width / printableWidth;
+                const pageCanvasHeight = Math.floor(printableHeight * pxPerMm);
+
+                let renderedHeight = 0;
+                let pageIndex = 0;
+
+                while (renderedHeight < canvas.height) {
+                  const chunkHeight = Math.min(pageCanvasHeight, canvas.height - renderedHeight);
+                  const pageCanvas = document.createElement('canvas');
+                  pageCanvas.width = canvas.width;
+                  pageCanvas.height = chunkHeight;
+
+                  const ctx = pageCanvas.getContext('2d');
+                  ctx.fillStyle = '#ffffff';
+                  ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+                  ctx.drawImage(
+                    canvas,
+                    0, renderedHeight, canvas.width, chunkHeight,
+                    0, 0, canvas.width, chunkHeight
+                  );
+
+                  const chunkImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
+                  const chunkMmHeight = (chunkHeight / canvas.width) * printableWidth;
+
+                  if (pageIndex > 0) pdf.addPage();
+                  pdf.addImage(chunkImgData, 'JPEG', margin, margin, printableWidth, chunkMmHeight);
+
+                  renderedHeight += chunkHeight;
+                  pageIndex++;
+                }
+
+                pdf.save(outName);
+                generatedSuccessfully = true;
+              }
+            } catch (canvasErr) {
+              console.warn('html2canvas rendering error, falling back to direct PDF text layout:', canvasErr);
+            }
+          }
+
+          // Guaranteed Fallback: Direct text formatting if canvas failed
+          if (!generatedSuccessfully) {
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(11);
+            pdf.setTextColor(30, 41, 59);
+
+            const rawText = sheet.innerText || "Document converted from " + currentDocxFile.name;
+            const splitLines = pdf.splitTextToSize(rawText, printableWidth);
+
+            let cursorY = margin + 10;
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(14);
+            pdf.text(currentDocxFile.name.replace(/\.[^/.]+$/, ""), margin, cursorY);
+            cursorY += 10;
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(10.5);
+
+            for (let i = 0; i < splitLines.length; i++) {
+              if (cursorY > a4Height - margin - 5) {
+                pdf.addPage();
+                cursorY = margin + 10;
+              }
+              pdf.text(splitLines[i], margin, cursorY);
+              cursorY += 5.5;
+            }
+
+            pdf.save(outName);
           }
 
           status.innerHTML = `
@@ -859,6 +957,9 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error('PDF generation error:', genErr);
           status.innerHTML = `<p style="color: #dc2626; font-weight: 600;">Failed to generate PDF: ${sanitize(genErr.message)}</p>`;
         } finally {
+          if (exportWrapper && exportWrapper.parentNode) {
+            exportWrapper.parentNode.removeChild(exportWrapper);
+          }
           convertBtn.disabled = false;
           convertBtn.innerHTML = `<span>📥 Convert & Download PDF</span>`;
         }
@@ -940,7 +1041,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
           document.getElementById('btn-dl-merged').onclick = () => {
-            const { jsPDF } = window.jspdf;
+            const jsPDF = getJsPdfClass();
             const pdf = new jsPDF();
             pdf.text(`Merged Document Binder (${files.length} items)`, 20, 25);
             files.forEach((f, idx) => {
@@ -1001,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
           document.getElementById('btn-dl-comp').onclick = () => {
-            const { jsPDF } = window.jspdf;
+            const jsPDF = getJsPdfClass();
             const pdf = new jsPDF();
             pdf.text(`Compressed PDF: ${file ? file.name : "Document.pdf"}`, 20, 20);
             pdf.save(`Optimized_${file ? file.name : "Document.pdf"}`);

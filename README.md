@@ -60,7 +60,7 @@ A full-featured, responsive **Adobe official website clone** ([adobe.com](https:
 - **Logic**: Vanilla JavaScript (ES6+, DOM events, HTML5 Canvas API)
 - **Libraries**:
   - [Mammoth.js](https://github.com/mwilliamson/mammoth.js) for client-side Word (`.docx`) document parsing.
-  - [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) for high-fidelity client-side HTML to PDF generation.
+  - [html2canvas](https://github.com/niklasvh/html2canvas) for high-resolution document canvas rasterization.
   - [jsPDF](https://github.com/parallax/jsPDF) for client-side PDF document compilation.
   - [PDF.js](https://mozilla.github.io/pdf.js/) for high-fidelity in-browser PDF rendering.
 
